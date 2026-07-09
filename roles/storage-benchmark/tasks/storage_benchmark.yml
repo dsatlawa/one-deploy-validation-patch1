@@ -230,6 +230,12 @@
     register: cleanup_result
     failed_when: "cleanup_result.rc != 0"
 
+  - name: "Record storage benchmark success for cluster '{{ current_cluster.name }}'"
+    ansible.builtin.set_fact:
+      verification_result: >-
+        {{ (verification_result | d({}))
+           | combine({'Storage benchmark' ~ current_cluster.report_suffix: 'ok'}) }}
+
   when: validation.run_storage_benchmark | d(true)
   rescue:
     - name: Best-effort cleanup of a leaked benchmark VM
